@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import {
   SafeAreaView,
@@ -11,29 +11,67 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from "react-native";
+import Api from "./helpers/Api";
 
 export default function CoinListViewComponent({ navigation }) {
   const currency = "€";
   const [dataSource, setDataSource] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const flatlistRef = useRef();
+
+  const api = new Api();
+
   useEffect(() => fetchData(), []);
 
-  const url =
-    "https://api.coingecko.com/api/v3/coins/markets?vs_currency=EUR&order=market_cap_desc&per_page=100&page=1&sparkline=false";
+  // let url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=EUR&order=market_cap_desc&per_page=10&page=${page}&sparkline=false`;
 
   const fetchData = () => {
-    fetch(url)
-      .then((response) => response.json())
+    api
+      .getMarkets({ vs_currency: "EUR", per_page: 10, page: page })
       .then((responseJson) => {
-        setIsLoading(false);
-        console.log(responseJson);
-        setDataSource(responseJson);
+        console.log(responseJson.data);
+
+        if (responseJson?.data) {
+          setIsLoading(false);
+
+          setDataSource((oldData) => [...oldData, ...responseJson.data]);
+          // setDataSource(responseJson.data);
+          setPage(page + 1);
+          console.log(page);
+        }
       });
+
+    // fetch(url)
+    //   .then((response) => response.json())
+    //   .then((responseJson) => {
+    //     setIsLoading(false);
+    //     console.log(url);
+    //     // setDataSource(responseJson);
+    //     setDataSource((oldData) => [...oldData, ...responseJson]);
+    //     setPage(page + 1);
+
+    //     let index = dataSource.length ? dataSource.length - 14 : 0;
+
+    //     console.log("dataSource" + dataSource.length);
+    //     console.log("index" + index);
+
+    //     if (index > 0) {
+
+    //       // flatlistRef.current.scrollToIndex({animated: true, index: index})
+    //     }
+
+    //     console.log(page);
+    //   });
+  };
+
+  const test = () => {
+    console.log("end reached");
   };
 
   const showItemDetails = (item) => {
     console.log(item.name);
-    navigation.navigate('ManjuMental', { id: item.id });
+    navigation.navigate("ManjuMental", { id: item.id });
   };
 
   const ItemView = ({ item }) => {
@@ -80,10 +118,14 @@ export default function CoinListViewComponent({ navigation }) {
   const CoinsListView = () => {
     return isLoading ? null : (
       <FlatList
-      keyExtractor={(item, index) => index.toString()}
+        ref={flatlistRef}
+        initialScrollIndex="0"
+        keyExtractor={(item, index) => index.toString()}
         data={dataSource}
         ItemSeparatorComponent={ItemSeparator}
         renderItem={ItemView}
+        onEndReached={fetchData}
+        onEndReachedThreshold={0.5}
       />
     );
   };

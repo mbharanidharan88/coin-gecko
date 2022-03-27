@@ -29,23 +29,47 @@ export default function CoinDetailsViewComponent({ navigation, route }) {
   const CoinsDetailsView = () => {
     return isLoading ? null : (
       <View>
-        <View style={styles.coinDetailsContainer}>
-          <Image
-            style={styles.imageView}
-            source={{ uri: coinData?.image?.large }}
-          ></Image>
+        <View style={styles.coinSummaryContainer}>
+          <View style={styles.coinImageSection}>
+            
+            <Image
+              style={styles.imageView}
+              source={{ uri: coinData?.image?.large }}
+            ></Image>
+            <Text style={styles.coin_data_label}>
+              <Text style={styles.coin_data_title}>Name:</Text> {coinData.name}
+            </Text>
+            <Text style={styles.coin_data_label}>
+              <Text style={styles.coin_data_title}>Symbol:</Text>{" "}
+              {coinData.symbol}
+            </Text>
+            
+          </View>
 
-          <View
-            style={{ borderWidth: 1, borderColor: "red", borderStyle: "solid" }}
-          >
-            <Text>Name: {coinData.name}</Text>
-            <Text>Symbol: {coinData.symbol}</Text>
-            <Text>Hashing Algorithm: {coinData.hashing_algorithm}</Text>
+          <View style={styles.coinDetailSection}>
+            <Text style={styles.coin_data_label}>
+              <Text style={styles.coin_data_title}>Hashing Algorithm:</Text>{" "}
+              {coinData.hashing_algorithm}
+            </Text>
+            <Text style={styles.coin_data_label}>
+              <Text style={styles.coin_data_title}>Genesis Date:</Text>{" "}
+              {coinData.genesis_date}
+            </Text>
+            <Text style={styles.coin_data_label}>
+              <Text style={styles.coin_data_title}>Home Page:</Text>{" "}
+              {coinData.links?.homepage}
+            </Text>
+            <Text style={styles.coin_data_label}>
+              <Text style={styles.coin_data_title}>Market Cap:</Text>{" "}
+              {coinData.market_data?.market_cap?.eur}
+            </Text>
           </View>
         </View>
 
         <View style={styles.coinDescriptionContainer}>
-          <Text>Description:</Text>
+          <Text style={styles.coin_data_label}>
+            <Text style={styles.coin_data_title}>Description:</Text>
+          </Text>
           <ScrollView style={styles.coinDescription}>
             <Text>{coinData.description?.en}</Text>
           </ScrollView>
@@ -70,21 +94,50 @@ export default function CoinDetailsViewComponent({ navigation, route }) {
 
 const styles = StyleSheet.create({
   coinDetailsWrapper: {
-      flex: 1,
-      flexDirection: "row",
-      backgroundColor: "blue"
+    flex: 1,
+    flexDirection: "row",
+    // backgroundColor: "blue",
   },
-  coinDetailsContainer: {
-    flex: 0.1,
+  coinSummaryContainer: {
+    flex: 0.4,
     height: 200,
-    flexWrap: 'wrap',
-    alignItems: 'flex-start',
-    backgroundColor: "white",
-    color: 'white'
+    flexDirection: "row",
+    // backgroundColor: "yellow",
+    color: "white",
   },
+
+  coinImageSection: {
+    flex: 0.3,
+    // backgroundColor: "blue",
+    justifyContent: "center",
+    marginLeft: 5,
+  },
+  imageView: {
+    margin: 10,
+    width: 50,
+    height: 50,
+  },
+
+  coinDetailSection: {
+    flex: 0.7,
+    // backgroundColor: "pink",
+    justifyContent: "center",
+    paddingLeft: 5,
+  },
+
   coinDescriptionContainer: {
-    flex: 0.8,
+    flex: 0.6,
     flexGrow: 1,
-    backgroundColor: "green"
+    padding: 5,
+    // backgroundColor: "green",
+  },
+
+  coin_data_label: {
+    marginTop: 5,
+    marginBottom: 5,
+  },
+
+  coin_data_title: {
+    fontWeight: "bold",
   },
 });
