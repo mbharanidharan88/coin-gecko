@@ -29,49 +29,36 @@ export default function CoinListViewComponent({ navigation }) {
   const fetchData = () => {
     api
       .getMarkets({ vs_currency: "EUR", per_page: 10, page: page })
-      .then((responseJson) => {
-        console.log(responseJson.data);
+      .then((coinMarkets) => {
+        console.log(coinMarkets);
 
-        if (responseJson?.data) {
+        if (coinMarkets) {
           setIsLoading(false);
 
-          setDataSource((oldData) => [...oldData, ...responseJson.data]);
+          setDataSource((oldData) => [...oldData, ...coinMarkets]);
           // setDataSource(responseJson.data);
           setPage(page + 1);
           console.log(page);
+          console.log(coinMarkets.length);
         }
       });
-
-    // fetch(url)
-    //   .then((response) => response.json())
-    //   .then((responseJson) => {
-    //     setIsLoading(false);
-    //     console.log(url);
-    //     // setDataSource(responseJson);
-    //     setDataSource((oldData) => [...oldData, ...responseJson]);
-    //     setPage(page + 1);
-
-    //     let index = dataSource.length ? dataSource.length - 14 : 0;
-
-    //     console.log("dataSource" + dataSource.length);
-    //     console.log("index" + index);
-
-    //     if (index > 0) {
-
-    //       // flatlistRef.current.scrollToIndex({animated: true, index: index})
-    //     }
-
-    //     console.log(page);
-    //   });
   };
 
-  const test = () => {
+  const onEndReached = () => {
     console.log("end reached");
+    fetchData();
+
+    // useEffect(() => {
+
+    console.log(flatlistRef.current);
+
+    // setTimeout(() => flatlistRef.current.scrollToIndex(3), 500);
+    // }, 0);
   };
 
   const showItemDetails = (item) => {
     console.log(item.name);
-    navigation.navigate("ManjuMental", { id: item.id });
+    navigation.navigate("CoinDetails", { id: item.id });
   };
 
   const ItemView = ({ item }) => {
@@ -124,7 +111,7 @@ export default function CoinListViewComponent({ navigation }) {
         data={dataSource}
         ItemSeparatorComponent={ItemSeparator}
         renderItem={ItemView}
-        onEndReached={fetchData}
+        onEndReached={onEndReached}
         onEndReachedThreshold={0.5}
       />
     );

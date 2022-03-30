@@ -7,8 +7,10 @@ import {
   Image,
 } from "react-native";
 import { useState, useEffect } from "react";
+import Api from "./helpers/Api";
 
 export default function CoinDetailsViewComponent({ navigation, route }) {
+  const api = new Api();
   const [isLoading, setIsLoading] = useState(true);
   const [coinData, setCoinData] = useState([]);
 
@@ -17,12 +19,17 @@ export default function CoinDetailsViewComponent({ navigation, route }) {
   const url = "https://api.coingecko.com/api/v3/coins/" + route.params.id;
 
   const fetchCoinData = () => {
-    fetch(url)
-      .then((response) => response.json())
-      .then((responseJson) => {
+
+    api
+    .getCoinDetail(route.params.id)
+
+      .then((response) => {
         setIsLoading(false);
-        console.log(responseJson.description?.en);
-        setCoinData(responseJson);
+
+        console.log(response);
+
+        // console.log(response.description?.en);
+        setCoinData(response);
       });
   };
 
@@ -37,11 +44,11 @@ export default function CoinDetailsViewComponent({ navigation, route }) {
               source={{ uri: coinData?.image?.large }}
             ></Image>
             <Text style={styles.coin_data_label}>
-              <Text style={styles.coin_data_title}>Name:</Text> {coinData.name}
+              <Text style={styles.coin_data_title}>Name:</Text> {coinData?.name}
             </Text>
             <Text style={styles.coin_data_label}>
               <Text style={styles.coin_data_title}>Symbol:</Text>{" "}
-              {coinData.symbol}
+              {coinData?.symbol}
             </Text>
             
           </View>
@@ -49,19 +56,19 @@ export default function CoinDetailsViewComponent({ navigation, route }) {
           <View style={styles.coinDetailSection}>
             <Text style={styles.coin_data_label}>
               <Text style={styles.coin_data_title}>Hashing Algorithm:</Text>{" "}
-              {coinData.hashing_algorithm}
+              {coinData?.hashing_algorithm}
             </Text>
             <Text style={styles.coin_data_label}>
               <Text style={styles.coin_data_title}>Genesis Date:</Text>{" "}
-              {coinData.genesis_date}
+              {coinData?.genesis_date}
             </Text>
             <Text style={styles.coin_data_label}>
               <Text style={styles.coin_data_title}>Home Page:</Text>{" "}
-              {coinData.links?.homepage}
+              {coinData?.homepage}
             </Text>
             <Text style={styles.coin_data_label}>
               <Text style={styles.coin_data_title}>Market Cap:</Text>{" "}
-              {coinData.market_data?.market_cap?.eur}
+              {coinData?.market_cap}
             </Text>
           </View>
         </View>
@@ -71,7 +78,7 @@ export default function CoinDetailsViewComponent({ navigation, route }) {
             <Text style={styles.coin_data_title}>Description:</Text>
           </Text>
           <ScrollView style={styles.coinDescription}>
-            <Text>{coinData.description?.en}</Text>
+            <Text>{coinData?.description}</Text>
           </ScrollView>
         </View>
       </View>

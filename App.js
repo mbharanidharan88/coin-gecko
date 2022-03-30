@@ -21,7 +21,7 @@ export default function App() {
           ></Stack.Screen>
 
           <Stack.Screen
-            name="ManjuMental"
+            name="CoinDetails"
             component={CoinDetailsViewComponent}
           />
         </Stack.Navigator>
